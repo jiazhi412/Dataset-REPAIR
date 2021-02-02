@@ -34,13 +34,16 @@ def train(loader, epochs, model, optimizer, scheduler=None):
     return loss, acc
 
 
-def measure_bias(train_loader, test_loader, feat_fn, feat_dim, epochs=20, lr=1e-2, verbose=True):
+def measure_bias(train_loader, test_loader, feat_fn, feat_dim, opt, verbose=True):
+    epochs = opt['epochs']
+    lr = opt['lr']
+    device = opt['device']
     # class counts
-    train_labels = torch.tensor([data[1] for data in train_loader.dataset]).long().cuda()
+    train_labels = torch.tensor([data[1] for data in train_loader.dataset]).long().to(device)
     n_cls = int(train_labels.max()) + 1
 
     # create models
-    model = nn.Linear(feat_dim, n_cls).cuda()
+    model = nn.Linear(feat_dim, n_cls).to(device)
     optimizer = optim.Adam(model.parameters(), lr=lr)
     scheduler = optim.lr_scheduler.StepLR(optimizer, 15, 0.1)
 
@@ -53,7 +56,7 @@ def measure_bias(train_loader, test_loader, feat_fn, feat_dim, epochs=20, lr=1e-
         scheduler.step()
 
         for x, y in train_loader:
-            x, y = x.cuda(), y.cuda()
+            x, y = x.to(device), y.to(device)
 
             # linear classifier
             out = model(feat_fn(x))
@@ -76,7 +79,7 @@ def measure_bias(train_loader, test_loader, feat_fn, feat_dim, epochs=20, lr=1e-
         corrects = 0
 
         for x, y in test_loader:
-            x, y = x.cuda(), y.cuda()
+            x, y = x.to(device), y.to(device)
             x = x.view(x.size(0), x.size(1), -1)
             out = model(feat_fn(x))
             loss = F.cross_entropy(out, y)
@@ -95,9 +98,12 @@ def measure_bias(train_loader, test_loader, feat_fn, feat_dim, epochs=20, lr=1e-
     return bias, loss, acc
 
 
-def measure_generalization(train_loader, test_loaders, model, epochs=20, lr=1e-2):
+def measure_generalization(train_loader, test_loaders, model, opt):
+    epochs = opt['epochs']
+    lr = opt['lr']
+    device = opt['device']
     # create models
-    model = model.cuda()
+    model = model.to(device)
     optimizer = optim.Adam(model.parameters(), lr=lr)
     scheduler = optim.lr_scheduler.StepLR(optimizer, 20, 0.1)
 

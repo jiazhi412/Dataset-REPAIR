@@ -1,6 +1,7 @@
 import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
+import os
 
 from utils.datasets import ColoredDataset
 from utils.measure import *
@@ -8,7 +9,8 @@ from utils.models import *
 
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument('--gpu', default=0, type=int)
+# parser.add_argument('--gpu', default=0, type=int)
+parser.add_argument('--with_cuda', dest='cuda', action='store_true')
 parser.add_argument('--model', default='lenet', choices=['lenet', 'mlp'], type=str)
 parser.add_argument('--color-std', type=float, default=0.1)
 parser.add_argument('--batch-size', default=128, type=int)
@@ -16,11 +18,16 @@ parser.add_argument('--lr', '--learning-rate', default=1e-2, type=float)
 parser.add_argument('--epochs', default=20, type=int)
 args = parser.parse_args()
 
-torch.cuda.set_device(args.gpu)
+opt = vars(parser.parse_args())
+opt['device'] = torch.device('cuda' if opt['cuda'] else 'cpu')
+
+root = './data'
+if not os.path.exists(root):
+    os.mkdir(root)
 
 # load data
-train_set = datasets.MNIST('/data4/yili/github/data/', train=True, download=True, transform=transforms.ToTensor())
-test_set = datasets.MNIST('/data4/yili/github/data/', train=False, download=True, transform=transforms.ToTensor())
+train_set = datasets.MNIST(root=root, train=True, download=True, transform=transforms.ToTensor())
+test_set = datasets.MNIST(root=root, train=False, download=True, transform=transforms.ToTensor())
 
 # biased datasets, i.e. colored mnist
 print('Coloring MNIST dataset with standard deviation = {:.2f}'.format(args.color_std))
@@ -38,8 +45,8 @@ gt_test_loader = DataLoader(gt_test_set, batch_size=args.batch_size, shuffle=Fal
 # measure bias
 color_fn = lambda x: x.view(x.size(0), x.size(1), -1).max(2)[0]  # color of digit
 color_dim = 3  # rgb
-bias = measure_bias(train_loader, test_loader, color_fn, color_dim, epochs=args.epochs, lr=args.lr)[0]
-gt_bias = measure_bias(gt_train_loader, gt_test_loader, color_fn, color_dim, epochs=args.epochs, lr=args.lr)[0]
+bias = measure_bias(train_loader, test_loader, color_fn, color_dim, opt)[0]
+gt_bias = measure_bias(gt_train_loader, gt_test_loader, color_fn, color_dim, opt)[0]
 print('Color bias of Colored MNIST = {:.3f}'.format(bias + 0))
 print('Color bias of Grayscale MNIST = {:.3f}'.format(gt_bias + 0))
 
