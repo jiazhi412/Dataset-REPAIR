@@ -10,7 +10,7 @@ from utils.models import *
 import argparse
 parser = argparse.ArgumentParser()
 # parser.add_argument('--gpu', default=0, type=int)
-parser.add_argument('--with_cuda', dest='cuda', action='store_true')
+parser.add_argument('--with-cuda', dest='cuda', action='store_true')
 parser.add_argument('--model', default='lenet', choices=['lenet', 'mlp'], type=str)
 parser.add_argument('--color-std', type=float, default=0.1)
 parser.add_argument('--batch-size', default=128, type=int)
@@ -52,6 +52,6 @@ print('Color bias of Grayscale MNIST = {:.3f}'.format(gt_bias + 0))
 
 # measure generalization
 model = create_mnist_model(args.model)
-acc, gt_acc = measure_generalization(train_loader, [test_loader, gt_test_loader], model, epochs=args.epochs, lr=args.lr)
+acc, gt_acc = measure_generalization(train_loader, [test_loader, gt_test_loader], model, opt)
 print('Test accuracy on Colored MNIST = {:.2%}'.format(acc))
 print('Generalization on Grayscale MNIST = {:.2%}'.format(gt_acc))
