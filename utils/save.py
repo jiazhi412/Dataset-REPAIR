@@ -39,7 +39,7 @@ def get_feature(train_loader, test_loaders, color_fn, opt):
 
         acc = corrects / len(test_loaders.dataset)
         print('Test accuracy on Colored MNIST = {:.2%}'.format(acc))
-    return feature, y, colors
+    return feature.cpu(), y.cpu(), colors.cpu()
 
 def train(loader, model, optimizer, opt, scheduler=None):
     epochs = opt['epochs']
