@@ -25,7 +25,7 @@ def get_feature(train_loader, test_loaders, color_fn, opt):
     scheduler = optim.lr_scheduler.StepLR(optimizer, 20, 0.1)
 
     # training
-    train(train_loader, epochs, model, optimizer, scheduler)
+    train(train_loader, model, optimizer, opt, scheduler)
 
     # testing
     with torch.no_grad():
@@ -41,7 +41,9 @@ def get_feature(train_loader, test_loaders, color_fn, opt):
         print('Test accuracy on Colored MNIST = {:.2%}'.format(acc))
     return feature, y, colors
 
-def train(loader, epochs, model, optimizer, scheduler=None):
+def train(loader, model, optimizer, opt, scheduler=None):
+    epochs = opt['epochs']
+    device = opt['device']
     model.train()
     with tqdm(range(1, epochs + 1)) as pbar:
         for _ in pbar:
@@ -51,6 +53,7 @@ def train(loader, epochs, model, optimizer, scheduler=None):
                 scheduler.step()
 
             for x, y in loader:
+                x,y = x.to(device), y.to(device)
                 out, feature = model(x)
                 loss = F.cross_entropy(out, y)
                 losses.append(loss.item())
