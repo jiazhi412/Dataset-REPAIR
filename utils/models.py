@@ -64,8 +64,8 @@ class LeNet(nn.Module):
 
 def create_mnist_model(model_name):
     if model_name == 'lenet':
-        return LeNet(3, 10).cuda()
+        return LeNet(3, 10)
     elif model_name == 'mlp':
-        return MLP(784 * 3, [300, 100], 10).cuda()
+        return MLP(784 * 3, [300, 100], 10)
     else:
         raise ValueError('Model not supported')

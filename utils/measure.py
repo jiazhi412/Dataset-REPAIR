@@ -19,7 +19,6 @@ def train(loader, epochs, model, optimizer, scheduler=None):
                 scheduler.step()
 
             for x, y in loader:
-                x, y = x.cuda(), y.cuda()
                 out = model(x)
                 loss = F.cross_entropy(out, y)
                 losses.append(loss.item())
@@ -59,7 +58,8 @@ def measure_bias(train_loader, test_loader, feat_fn, feat_dim, opt, verbose=True
             x, y = x.to(device), y.to(device)
 
             # linear classifier
-            out = model(feat_fn(x))
+            color = feat_fn(x)
+            out = model(color)
             loss = F.cross_entropy(out, y)
             losses.append(loss.item())
             corrects += out.max(1)[1].eq(y).sum().item()
@@ -120,7 +120,7 @@ def measure_generalization(train_loader, test_loaders, model, opt):
             corrects = 0
 
             for x, y in loader:
-                x, y = x.cuda(), y.cuda()
+                x, y = x.to(device), y.to(device)
                 out = model(x)
                 loss = F.cross_entropy(out, y)
                 losses.append(loss.item())
