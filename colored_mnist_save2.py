@@ -60,4 +60,4 @@ save_file = {'feature': features,
              'color': colors}
 save_path = './feature'
 create_folder(save_path)
-save_pkl(save_file, os.path.join(save_path, 'feature_training_{}.pkl'.format(args.color_std)))
+save_pkl(save_file, os.path.join(save_path, 'feature_model_{}.pkl'.format(args.color_std)))
