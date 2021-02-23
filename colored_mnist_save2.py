@@ -1,4 +1,5 @@
-# vary training color std, vary testing color std
+# vary training color std, keep same testing color std
+test_color_std = 0.5
 import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
@@ -35,7 +36,7 @@ test_set = datasets.MNIST(root=root, train=False, download=True, transform=trans
 print('Coloring MNIST dataset with standard deviation = {:.2f}'.format(args.color_std))
 colored_train_set = ColoredDataset(train_set, classes=10, colors=[0, 1], std=args.color_std)
 train_loader = DataLoader(colored_train_set, batch_size=args.batch_size, shuffle=True, num_workers=4, pin_memory=True)
-colored_test_set = ColoredDataset(test_set, classes=10, colors=colored_train_set.colors, std=args.color_std)
+colored_test_set = ColoredDataset(test_set, classes=10, colors=colored_train_set.colors, std=test_color_std)
 # test_loader = DataLoader(colored_test_set, batch_size=args.batch_size, shuffle=False, num_workers=4, pin_memory=True)
 test_loader = DataLoader(colored_test_set, batch_size=len(colored_test_set), shuffle=False, num_workers=4, pin_memory=True)
 
@@ -59,4 +60,4 @@ save_file = {'feature': features,
              'color': colors}
 save_path = './feature'
 create_folder(save_path)
-save_pkl(save_file, os.path.join(save_path, 'feature_{}.pkl'.format(args.color_std)))
+save_pkl(save_file, os.path.join(save_path, 'feature_training_{}.pkl'.format(args.color_std)))

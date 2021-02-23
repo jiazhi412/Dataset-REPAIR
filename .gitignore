@@ -2,9 +2,15 @@
 data/*
 .idea/*
 feature/*
+.vscode/*
+.DS_Store
 
 # Byte-compiled / optimized / DLL files
+<<<<<<< HEAD
 */__pycache__/*
+=======
+*__pycache__/*
+>>>>>>> f0a48a686140760ed302da9b770297e13e0ddf67
 *.py[cod]
 *$py.class
 
