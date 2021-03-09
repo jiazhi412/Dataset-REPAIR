@@ -1,1 +1,11 @@
-python colored_mnist_save.py --color-std 0.3 --epochs 1
+python colored_mnist_save2.py --color-std 0 --epochs 1 --with-cuda
+python colored_mnist_save2.py --color-std 0.1 --epochs 1 --with-cuda
+python colored_mnist_save2.py --color-std 0.2 --epochs 1 --with-cuda
+python colored_mnist_save2.py --color-std 0.3 --epochs 1 --with-cuda
+python colored_mnist_save2.py --color-std 0.3 --epochs 1 --with-cuda
+python colored_mnist_save2.py --color-std 0.4 --epochs 1 --with-cuda
+python colored_mnist_save2.py --color-std 0.5 --epochs 1 --with-cuda
+python colored_mnist_save2.py --color-std 0.6 --epochs 1 --with-cuda
+python colored_mnist_save2.py --color-std 0.7 --epochs 1 --with-cuda
+python colored_mnist_save2.py --color-std 0.8 --epochs 1 --with-cuda
+python colored_mnist_save2.py --color-std 0.9 --epochs 1 --with-cuda
