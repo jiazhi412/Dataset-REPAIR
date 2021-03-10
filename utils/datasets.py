@@ -33,7 +33,7 @@ class IndexedDataset(Dataset):
 
 
 class ColoredDataset(Dataset):
-    def __init__(self, dataset, classes=None, colors=[0, 1], std=0):
+    def __init__(self, dataset, classes=None, colors=[0, 1], std=0, two_color = False):
         self.dataset = dataset
         self.colors = colors
         if classes is None:
@@ -42,7 +42,12 @@ class ColoredDataset(Dataset):
         if isinstance(colors, torch.Tensor):
             self.colors = colors
         elif isinstance(colors, list):
-            self.colors = torch.Tensor(classes, 3, 1, 1).uniform_(colors[0], colors[1])
+            if two_color:
+                half1 = torch.zeros(classes//2, 3, 1, 1) + torch.rand(1,3,1,1)
+                half2 = torch.zeros(classes//2, 3, 1, 1) + torch.rand(1,3,1,1)
+                self.colors = torch.cat((half1,half2))
+            else:
+                self.colors = torch.Tensor(classes, 3, 1, 1).uniform_(colors[0], colors[1])
         else:
             raise ValueError('Unsupported colors!')
         self.perturb = std * torch.randn(len(self.dataset), 3, 1, 1)
